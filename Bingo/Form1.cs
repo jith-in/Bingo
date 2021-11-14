@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.IO;
@@ -10,6 +11,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 
 namespace Bingo
 {
@@ -19,6 +22,8 @@ namespace Bingo
         DataTable DtNew;
         int dtrowCount;
         int dtnewrowCount;
+        string path;
+        string fullPath;
         public Form1()
         {
             InitializeComponent();
@@ -31,7 +36,7 @@ namespace Bingo
             op1.ShowDialog();
             op1.Filter = "CSV files (*.csv)|*.csv";
             dataGridView1.DataSource = ConvertCSVtoDataTable1(op1.FileName);
-
+            dataGridView2.DataSource = DtNew = null;
         }
 
 
@@ -40,6 +45,7 @@ namespace Bingo
         {
             try
             {
+                
                 StreamReader sr = new StreamReader(strFilePath);
                 string[] headers = Regex.Split(sr.ReadLine(), ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
                 DataTable dtcsv = new DataTable();
@@ -67,6 +73,7 @@ namespace Bingo
                 }
                 dt = dtcsv;
                 dtrowCount = dt.Rows.Count;
+               
                 return dtcsv;
             }
             catch(Exception ex)
@@ -77,6 +84,7 @@ namespace Bingo
         }
         private void button2_Click(object sender, EventArgs e)
         {
+           Cursor = Cursors.WaitCursor;
             int count;
             if (dt != null && dt.Rows.Count > 0 && dtrowCount != dtnewrowCount)
             {
@@ -123,8 +131,8 @@ namespace Bingo
                         if (rows.Count() != 0)
                             dt = rows.CopyToDataTable();
                         dataGridView1.DataSource = dt;
-
                         
+
                     }
                     else
                     {
@@ -155,6 +163,7 @@ namespace Bingo
                     MessageBox.Show("Upload Data");
                 }
             }
+           Cursor = Cursors.Arrow;
         }
 
         private void clear()
@@ -171,6 +180,83 @@ namespace Bingo
         private void button2_Click_1(object sender, EventArgs e)
         {
             clear();
+        }
+        public void ExportToPdf(DataTable myDataTable)
+        {
+            DataTable dt = myDataTable;
+            Document pdfDoc = new Document();
+            iTextSharp.text.Font font13 = FontFactory.GetFont("ARIAL", 13);
+            iTextSharp.text.Font font10 = FontFactory.GetFont("ARIAL", 10);
+            try
+            {
+                path = ConfigurationManager.AppSettings["PDFDownloadPath"].ToString();
+                fullPath = Path.Combine(path, "Data.pdf");
+                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, new FileStream(fullPath, FileMode.Create));
+                pdfDoc.Open();
+
+                if (dt.Rows.Count > 0)
+                {
+                    PdfPTable PdfTable = new PdfPTable(1);
+
+                    PdfPCell PdfPCell = new PdfPCell();
+                  
+                   
+
+                    PdfTable = new PdfPTable(dt.Columns.Count);
+                    PdfTable.SpacingBefore = 25f;
+                    for (int columns = 0; columns <= dt.Columns.Count - 1; columns++)
+                    {
+                        PdfPCell = new PdfPCell(new Phrase(new Chunk(dt.Columns[columns].ColumnName, font13)));
+                        PdfTable.AddCell(PdfPCell);
+                    }
+
+                    for (int rows = 0; rows <= dt.Rows.Count - 1; rows++)
+                    {
+                        for (int column = 0; column <= dt.Columns.Count - 1; column++)
+                        {
+                            PdfPCell = new PdfPCell(new Phrase(new Chunk(dt.Rows[rows][column].ToString(), font10)));
+                            PdfTable.AddCell(PdfPCell);
+                        }
+                    }
+                    pdfDoc.Add(PdfTable);
+                }
+                pdfDoc.Close();
+               
+            }
+            catch (DocumentException de)
+            {
+                MessageBox.Show("Exception :"+ de.Message.ToString());
+            }
+            
+            catch (IOException ioEx)
+            {
+                MessageBox.Show("Exception :" + ioEx.Message.ToString());
+            }
+            
+            catch (Exception ex)
+            {
+                MessageBox.Show("Exception :" + ex.Message.ToString());
+            }
+        }
+
+        private static void DrawLine(PdfWriter writer, float x1, float y1, float x2, float y2, BaseColor color)
+        {
+            PdfContentByte contentByte = writer.DirectContent;
+            contentByte.SetColorStroke(color);
+            contentByte.MoveTo(x1, y1);
+            contentByte.LineTo(x2, y2);
+            contentByte.Stroke();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (DtNew != null && DtNew.Rows.Count > 0)
+            {
+                ExportToPdf(DtNew);
+                MessageBox.Show("Exported to "+ fullPath);
+            }
+            else
+                MessageBox.Show("No data available");
         }
     }
 }
