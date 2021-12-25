@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -73,7 +74,7 @@ namespace Bingo
                 }
                 dt = dtcsv;
                 dtrowCount = dt.Rows.Count;
-               
+                recordCount.Text = dtrowCount.ToString() + " Records Loaded";
                 return dtcsv;
             }
             catch(Exception ex)
@@ -82,6 +83,8 @@ namespace Bingo
                 return null;
             }
         }
+
+        
         private void button2_Click(object sender, EventArgs e)
         {
            Cursor = Cursors.WaitCursor;
@@ -90,9 +93,10 @@ namespace Bingo
             {
                 var rand = new Random();
                 List<DataRow> list1 = dt.AsEnumerable().ToList();
-
-
+                
+               
                 List<DataRow> randomList = new List<DataRow>();
+               
                 var list = dt.AsEnumerable().ToList();
                 List<int> randomNumbers = new List<int>();
                 var random = new Random();
@@ -122,16 +126,19 @@ namespace Bingo
                             DtNew = new DataTable();
                             DtNew.Merge(DtRandom);
                         }
-                        
-                        dataGridView2.DataSource = DtNew;
 
+                        //Logic to add extra columns that is not available in the csv
+                        AdditionalColumns(DtNew);
+                        DataView view = new DataView(DtNew);
+                        DtNew = view.ToTable("DtNew", false, "SNO", "TXNDATE", "REFNO", "CUSTOMERNAME", "IDNO", "AMOUNT", "RESULT");
+                        dataGridView2.DataSource = DtNew;
                         dtnewrowCount = DtNew.Rows.Count;
+                        //
 
                         var rows = dt.AsEnumerable().Except(DtNew.AsEnumerable(), DataRowComparer.Default);
                         if (rows.Count() != 0)
                             dt = rows.CopyToDataTable();
                         dataGridView1.DataSource = dt;
-                        
 
                     }
                     else
@@ -165,7 +172,62 @@ namespace Bingo
             }
            Cursor = Cursors.Arrow;
         }
+        private static void AdditionalColumns(DataTable DtNew)
+        {
+            try
+            {
+                if (!ContainColumn("SNO", DtNew))
+                {
+                    DataColumn newCol = new DataColumn("SNO");
+                    DtNew.Columns.Add(newCol);
+                }
+                int i = 1;
+                foreach (DataRow row in DtNew.Rows)
+                {
 
+                    row["SNO"] = i;
+                    i++;
+
+                }
+                if (!ContainColumn("RESULT", DtNew))
+                {
+                    DataColumn newCol = new DataColumn("RESULT");
+                    DtNew.Columns.Add(newCol);
+                }
+                int j = 1;
+                foreach (DataRow row in DtNew.Rows)
+                {
+                    if (j < 3)
+                    {
+                        row["Result"] = "Bumper Prize Winner";
+                    }
+                    else
+                    {
+                        row["Result"] = "Winner";
+                    }
+                    j++;
+
+                }
+                i = 0;
+                j = 0;
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+        }
+        private static bool ContainColumn(string columnName, DataTable table)
+        {
+            DataColumnCollection columns = table.Columns;
+            if (columns.Contains(columnName))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         private void clear()
         {
             dtnewrowCount = 0;
@@ -186,11 +248,14 @@ namespace Bingo
             DataTable dt = myDataTable;
             Document pdfDoc = new Document();
             iTextSharp.text.Font font13 = FontFactory.GetFont("ARIAL", 13);
-            iTextSharp.text.Font font10 = FontFactory.GetFont("ARIAL", 10);
+            iTextSharp.text.Font font8 = FontFactory.GetFont("ARIAL", 8);
+            iTextSharp.text.Font headerFont= FontFactory.GetFont("HELVETICA", 15);
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             try
             {
                 path = ConfigurationManager.AppSettings["PDFDownloadPath"].ToString();
-                fullPath = Path.Combine(path, "Data.pdf");
+                fullPath = Path.Combine(path, "Alzamanexchange_Promotion_Draw_Results.pdf");
                 PdfWriter writer = PdfWriter.GetInstance(pdfDoc, new FileStream(fullPath, FileMode.Create));
                 pdfDoc.Open();
 
@@ -199,8 +264,16 @@ namespace Bingo
                     PdfPTable PdfTable = new PdfPTable(1);
 
                     PdfPCell PdfPCell = new PdfPCell();
-                  
-                   
+                    string imageURL = "https://alzamanexchange.com/assets/images/al-zaman-Logo.png";
+
+                    iTextSharp.text.Image jpg = iTextSharp.text.Image.GetInstance(imageURL);
+                    pdfDoc.Add(jpg);
+                    string texttoDisplay = "Alzaman Exchange Promotion Draw Results";
+                    Paragraph para = new Paragraph(texttoDisplay, headerFont);
+                    para.Alignment = Element.ALIGN_CENTER;
+                    pdfDoc.Add(para);
+                    
+                    
 
                     PdfTable = new PdfPTable(dt.Columns.Count);
                     PdfTable.SpacingBefore = 25f;
@@ -214,7 +287,7 @@ namespace Bingo
                     {
                         for (int column = 0; column <= dt.Columns.Count - 1; column++)
                         {
-                            PdfPCell = new PdfPCell(new Phrase(new Chunk(dt.Rows[rows][column].ToString(), font10)));
+                            PdfPCell = new PdfPCell(new Phrase(new Chunk(dt.Rows[rows][column].ToString(), font8)));
                             PdfTable.AddCell(PdfPCell);
                         }
                     }
