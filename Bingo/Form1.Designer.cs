@@ -29,7 +29,7 @@ namespace Bingo
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.button1 = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.Generate = new System.Windows.Forms.Button();
@@ -38,6 +38,7 @@ namespace Bingo
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.recordCount = new System.Windows.Forms.Label();
+            this.txtHeader = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
@@ -45,7 +46,7 @@ namespace Bingo
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(893, 94);
+            this.button1.Location = new System.Drawing.Point(1137, 90);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(141, 30);
             this.button1.TabIndex = 0;
@@ -56,10 +57,10 @@ namespace Bingo
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(36, 29);
+            this.dataGridView1.Location = new System.Drawing.Point(27, 42);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
-            this.dataGridView1.Size = new System.Drawing.Size(826, 153);
+            this.dataGridView1.Size = new System.Drawing.Size(1054, 144);
             this.dataGridView1.TabIndex = 2;
             // 
             // Generate
@@ -77,19 +78,19 @@ namespace Bingo
             // 
             this.dataGridView2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Tai Le", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridView2.Location = new System.Drawing.Point(27, 269);
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Tai Le", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridView2.Location = new System.Drawing.Point(27, 278);
             this.dataGridView2.Margin = new System.Windows.Forms.Padding(4);
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.RowHeadersWidth = 51;
-            this.dataGridView2.Size = new System.Drawing.Size(998, 480);
+            this.dataGridView2.Size = new System.Drawing.Size(1289, 434);
             this.dataGridView2.TabIndex = 5;
             // 
             // textBox1
@@ -127,16 +128,26 @@ namespace Bingo
             // recordCount
             // 
             this.recordCount.AutoSize = true;
-            this.recordCount.Location = new System.Drawing.Point(73, 189);
+            this.recordCount.Location = new System.Drawing.Point(75, 205);
             this.recordCount.Name = "recordCount";
             this.recordCount.Size = new System.Drawing.Size(0, 17);
             this.recordCount.TabIndex = 8;
+            // 
+            // txtHeader
+            // 
+            this.txtHeader.BackColor = System.Drawing.SystemColors.Control;
+            this.txtHeader.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtHeader.Location = new System.Drawing.Point(131, 13);
+            this.txtHeader.Name = "txtHeader";
+            this.txtHeader.Size = new System.Drawing.Size(694, 15);
+            this.txtHeader.TabIndex = 9;
             // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1082, 903);
+            this.ClientSize = new System.Drawing.Size(1329, 749);
+            this.Controls.Add(this.txtHeader);
             this.Controls.Add(this.recordCount);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -164,6 +175,7 @@ namespace Bingo
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label recordCount;
+        private System.Windows.Forms.TextBox txtHeader;
     }
 }
 
