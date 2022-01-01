@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
@@ -257,11 +253,11 @@ namespace Bingo
                 {
                     if (j < 3)
                     {
-                        row["Result"] = "Bumper Prize Winner-100gm";
+                        row["Result"] = "Bumper Prize Winner-100 gm";
                     }
                     else
                     {
-                        row["Result"] = "Winner-8gm";
+                        row["Result"] = "Winner-8 gm";
                     }
                     j++;
 
@@ -324,7 +320,7 @@ namespace Bingo
                     PdfPTable PdfTable = new PdfPTable(1);
 
                     PdfPCell PdfPCell = new PdfPCell();
-                    string imageURL = "https://alzamanexchange.com/assets/images/al-zaman-Logo.png";
+                    string imageURL = @".\Sample File\al-zaman-Logo.png";
 
                     iTextSharp.text.Image jpg = iTextSharp.text.Image.GetInstance(imageURL);
                     pdfDoc.Add(jpg);
