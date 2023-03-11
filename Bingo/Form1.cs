@@ -165,10 +165,10 @@ namespace Bingo
                             {
                                 dataGridView2.Rows[0].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#FFD700");
                             }
-                            if (DtNew.Rows.Count >= 2)
-                            {
-                                dataGridView2.Rows[1].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#FFD700");
-                            }
+                            //if (DtNew.Rows.Count >= 2)
+                            //{
+                            //    dataGridView2.Rows[1].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#FFD700");
+                            //}
                         }
                         else
                         {
@@ -251,13 +251,13 @@ namespace Bingo
                 int j = 1;
                 foreach (DataRow row in DtNew.Rows)
                 {
-                    if (j < 3)
+                    if (j <= 1)
                     {
-                        row["Result"] = "Bumper Prize Winner-100 gm";
+                        row["Result"] = "Bumper Prize-50 gm Golden Ball";
                     }
                     else
                     {
-                        row["Result"] = "Winner-8 gm";
+                        row["Result"] = "Winner-10 gm Gold Bars";
                     }
                     j++;
 
