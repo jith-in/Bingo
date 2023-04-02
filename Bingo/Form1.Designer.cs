@@ -29,7 +29,7 @@ namespace Bingo
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.button1 = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.Generate = new System.Windows.Forms.Button();
@@ -39,6 +39,7 @@ namespace Bingo
             this.button3 = new System.Windows.Forms.Button();
             this.recordCount = new System.Windows.Forms.Label();
             this.txtHeader = new System.Windows.Forms.TextBox();
+            this.btnExcel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
@@ -78,14 +79,14 @@ namespace Bingo
             // 
             this.dataGridView2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Tai Le", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Tai Le", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView2.Location = new System.Drawing.Point(27, 278);
             this.dataGridView2.Margin = new System.Windows.Forms.Padding(4);
             this.dataGridView2.Name = "dataGridView2";
@@ -130,7 +131,7 @@ namespace Bingo
             this.recordCount.AutoSize = true;
             this.recordCount.Location = new System.Drawing.Point(75, 205);
             this.recordCount.Name = "recordCount";
-            this.recordCount.Size = new System.Drawing.Size(0, 17);
+            this.recordCount.Size = new System.Drawing.Size(0, 16);
             this.recordCount.TabIndex = 8;
             // 
             // txtHeader
@@ -142,11 +143,22 @@ namespace Bingo
             this.txtHeader.Size = new System.Drawing.Size(694, 15);
             this.txtHeader.TabIndex = 9;
             // 
+            // btnExcel
+            // 
+            this.btnExcel.Location = new System.Drawing.Point(1027, 222);
+            this.btnExcel.Name = "btnExcel";
+            this.btnExcel.Size = new System.Drawing.Size(104, 34);
+            this.btnExcel.TabIndex = 10;
+            this.btnExcel.Text = "Export to Excel";
+            this.btnExcel.UseVisualStyleBackColor = true;
+            this.btnExcel.Click += new System.EventHandler(this.btnExcel_Click);
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(1329, 749);
+            this.Controls.Add(this.btnExcel);
             this.Controls.Add(this.txtHeader);
             this.Controls.Add(this.recordCount);
             this.Controls.Add(this.button3);
@@ -176,6 +188,7 @@ namespace Bingo
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label recordCount;
         private System.Windows.Forms.TextBox txtHeader;
+        private System.Windows.Forms.Button btnExcel;
     }
 }
 

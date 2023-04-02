@@ -10,11 +10,12 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-
+using Excel = Microsoft.Office.Interop.Excel;
 namespace Bingo
 {
     public partial class Form1 : Form
     {
+
         DataTable dt;
         DataTable DtNew;
         int dtrowCount;
@@ -23,6 +24,8 @@ namespace Bingo
         string fullPath;
         string strtDate = string.Empty;
         string strtEnd = string.Empty;
+        string strExcelPath;
+
         public Form1()
         {
             InitializeComponent();
@@ -39,9 +42,9 @@ namespace Bingo
             dataGridView1.DataSource = ConvertCSVtoDataTable1(op1.FileName);
             dataGridView2.DataSource = DtNew = null;
             strtDate = string.Empty;
-           
+
             strtEnd = string.Empty;
-           
+
         }
 
 
@@ -381,11 +384,90 @@ namespace Bingo
         {
             if (DtNew != null && DtNew.Rows.Count > 0)
             {
-                ExportToPdf(DtNew);
-                MessageBox.Show("Exported to " + fullPath);
+                if (ConfigurationManager.AppSettings.AllKeys.Contains("PDFDownloadPath"))
+                {
+                    ExportToPdf(DtNew);
+                    MessageBox.Show("Exported to " + fullPath);
+                }
+                else
+                {
+                    MessageBox.Show("PDF Download path not configured. Please update path in appconfig");
+                }
+
             }
             else
                 MessageBox.Show("No data available");
+        }
+
+
+
+        private void btnExcel_Click(object sender, EventArgs e)
+        {
+
+            if (DtNew != null && DtNew.Rows.Count > 0)
+            {
+                if (ConfigurationManager.AppSettings.AllKeys.Contains("ExcelDownloadPath"))
+                {
+                    string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+
+                    string filepath = timestamp + "_" + "data.xlsx";
+
+                    strExcelPath = ConfigurationManager.AppSettings["ExcelDownloadPath"].ToString() + filepath;
+                    ExportToExcel(DtNew, strExcelPath);
+                    MessageBox.Show("Exported to " + strExcelPath);
+                }
+                else
+                {
+                    MessageBox.Show("Excel Download path not configured. Please update path in appconfig");
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("No data available");
+                return;
+            }
+
+
+        }
+
+        public void ExportToExcel(DataTable dtExcel, string strExcelPath)
+        {
+            // Create a new Excel application
+            Excel.Application excel = new Excel.Application();
+
+            // Create a new workbook
+            Excel.Workbook workbook = excel.Workbooks.Add();
+
+            // Create a new worksheet
+            Excel.Worksheet worksheet = workbook.ActiveSheet;
+
+            // Set the column headers
+            for (int i = 0; i < dtExcel.Columns.Count; i++)
+            {
+                worksheet.Cells[1, i + 1] = dtExcel.Columns[i].ColumnName;
+            }
+
+            // Set the cell values
+            for (int i = 0; i < dtExcel.Rows.Count; i++)
+            {
+                for (int j = 0; j < dtExcel.Columns.Count; j++)
+                {
+                    worksheet.Cells[i + 2, j + 1] = dtExcel.Rows[i][j].ToString();
+                }
+            }
+
+            workbook.SaveAs(strExcelPath);
+            // Save the workbook
+
+
+            // Close the workbook and release the resources
+            workbook.Close();
+            excel.Quit();
+
+
+
+
         }
     }
 }
