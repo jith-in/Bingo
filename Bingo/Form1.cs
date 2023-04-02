@@ -15,7 +15,7 @@ namespace Bingo
 {
     public partial class Form1 : Form
     {
-
+       
         DataTable dt;
         DataTable DtNew;
         int dtrowCount;
@@ -25,7 +25,9 @@ namespace Bingo
         string strtDate = string.Empty;
         string strtEnd = string.Empty;
         string strExcelPath;
-
+        int ifirstpricecount = Convert.ToInt32(ConfigurationManager.AppSettings["firstprizecount"].ToString());
+        string strFirstprizetext = ConfigurationManager.AppSettings["firstprizetxt"].ToString();
+        string strSecondprizetext = ConfigurationManager.AppSettings["secondprizetxt"].ToString();
         public Form1()
         {
             InitializeComponent();
@@ -118,77 +120,89 @@ namespace Bingo
             {
                 Cursor = Cursors.WaitCursor;
                 int count;
+                bool isValid = int.TryParse(textBox1.Text.ToString(), out count);
                 if (dt != null && dt.Rows.Count > 0 && dtrowCount != dtnewrowCount)
                 {
-                    var rand = new Random();
-                    List<DataRow> list1 = dt.AsEnumerable().ToList();
-
-
-                    List<DataRow> randomList = new List<DataRow>();
-
-                    var list = dt.AsEnumerable().ToList();
-                    List<int> randomNumbers = new List<int>();
-                    var random = new Random();
-                    if (!string.IsNullOrEmpty(textBox1.Text.ToString()))
+                    if (dtrowCount >= (dtnewrowCount + count))
                     {
-                        bool isValid = int.TryParse(textBox1.Text.ToString(), out count);
-                        if (isValid && count > 0 && count <= dt.Rows.Count)
-                        {
-                            do
-                            {
-                                int index = random.Next(list.Count);
-                                if (!randomNumbers.Contains(index))
-                                {
-                                    randomNumbers.Add(index);
-                                    randomList.Add(list[index]);
+                        var rand = new Random();
+                        List<DataRow> list1 = dt.AsEnumerable().ToList();
 
+
+                        List<DataRow> randomList = new List<DataRow>();
+
+                        var list = dt.AsEnumerable().ToList();
+                        List<int> randomNumbers = new List<int>();
+                        var random = new Random();
+                        if (!string.IsNullOrEmpty(textBox1.Text.ToString()))
+                        {
+
+                            if (isValid && count > 0 && count <= dt.Rows.Count)
+                            {
+                                do
+                                {
+                                    int index = random.Next(list.Count);
+                                    if (!randomNumbers.Contains(index))
+                                    {
+                                        randomNumbers.Add(index);
+                                        randomList.Add(list[index]);
+
+
+                                    }
+                                } while (randomList.Count() < count);
+
+                                DataTable DtRandom = new DataTable();
+                                DtRandom = randomList.CopyToDataTable();
+                                if (DtNew != null && DtNew.Rows.Count > 0)
+                                    DtNew.Merge(DtRandom);
+                                else
+                                {
+                                    DtNew = new DataTable();
+                                    DtNew.Merge(DtRandom);
+                                }
+
+                                //Logic to add extra columns that is not available in the csv
+                                AddAdditionalColumns();
+                                //
+
+                                var rows = dt.AsEnumerable().Except(DtNew.AsEnumerable(), DataRowComparer.Default);
+                                if (rows.Count() != 0)
+                                    dt = rows.CopyToDataTable();
+                                dataGridView1.DataSource = dt;
+                                if (DtNew.Rows.Count >= ifirstpricecount)
+                                {
+                                    for (int i = 0; i < ifirstpricecount; i++)
+                                    {
+                                        dataGridView2.Rows[i].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#FFD700");
+                                    }
 
                                 }
-                            } while (randomList.Count() < count);
-
-                            DataTable DtRandom = new DataTable();
-                            DtRandom = randomList.CopyToDataTable();
-                            if (DtNew != null && DtNew.Rows.Count > 0)
-                                DtNew.Merge(DtRandom);
+                                //if (DtNew.Rows.Count >= 2)
+                                //{
+                                //    dataGridView2.Rows[1].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#FFD700");
+                                //}
+                            }
                             else
                             {
-                                DtNew = new DataTable();
-                                DtNew.Merge(DtRandom);
-                            }
+                                if (count > dt.Rows.Count)
+                                {
+                                    MessageBox.Show("Number should be less than uploaded data!!");
+                                }
+                                if (!isValid)
+                                {
+                                    MessageBox.Show("Enter a Valid Number!!");
+                                }
 
-                            //Logic to add extra columns that is not available in the csv
-                            AddAdditionalColumns();
-                            //
-
-                            var rows = dt.AsEnumerable().Except(DtNew.AsEnumerable(), DataRowComparer.Default);
-                            if (rows.Count() != 0)
-                                dt = rows.CopyToDataTable();
-                            dataGridView1.DataSource = dt;
-                            if (DtNew.Rows.Count >= 1)
-                            {
-                                dataGridView2.Rows[0].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#FFD700");
                             }
-                            //if (DtNew.Rows.Count >= 2)
-                            //{
-                            //    dataGridView2.Rows[1].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#FFD700");
-                            //}
                         }
                         else
                         {
-                            if (count > dt.Rows.Count)
-                            {
-                                MessageBox.Show("Number should be less than uploaded data!!");
-                            }
-                            if (!isValid)
-                            {
-                                MessageBox.Show("Enter a Valid Number!!");
-                            }
-
+                            MessageBox.Show("Enter Count");
                         }
                     }
                     else
                     {
-                        MessageBox.Show("Enter Count");
+                        MessageBox.Show("No more records to add");
                     }
                 }
                 else
@@ -229,7 +243,7 @@ namespace Bingo
             }
         }
 
-        private static void AdditionalColumns(DataTable DtNew)
+        public  void AdditionalColumns(DataTable DtNew)
         {
             try
             {
@@ -254,13 +268,13 @@ namespace Bingo
                 int j = 1;
                 foreach (DataRow row in DtNew.Rows)
                 {
-                    if (j <= 1)
+                    if (j <= ifirstpricecount)
                     {
-                        row["Result"] = "Bumper Prize-50 gm Golden Ball";
+                        row["Result"] = strFirstprizetext;
                     }
                     else
                     {
-                        row["Result"] = "Winner-10 gm Gold Bars";
+                        row["Result"] = strSecondprizetext;
                     }
                     j++;
 
@@ -314,7 +328,7 @@ namespace Bingo
             try
             {
                 path = ConfigurationManager.AppSettings["PDFDownloadPath"].ToString();
-                fullPath = Path.Combine(path, "Alzamanexchange_Promotion_Draw_Results.pdf");
+                fullPath = Path.Combine(path, "Dohaexchange_Promotion_Draw_Results.pdf");
                 PdfWriter writer = PdfWriter.GetInstance(pdfDoc, new FileStream(fullPath, FileMode.Create));
                 pdfDoc.Open();
 
@@ -323,11 +337,12 @@ namespace Bingo
                     PdfPTable PdfTable = new PdfPTable(1);
 
                     PdfPCell PdfPCell = new PdfPCell();
-                    string imageURL = @".\Sample File\al-zaman-Logo.png";
+                    string imageURL = @".\Sample File\Dohaex.png";
 
                     iTextSharp.text.Image jpg = iTextSharp.text.Image.GetInstance(imageURL);
+                    jpg.ScaleToFit(pdfDoc.PageSize.Width, 75);
                     pdfDoc.Add(jpg);
-                    string texttoDisplay = "Alzaman Exchange Promotion Draw Results";
+                    string texttoDisplay = "Doha Exchange Promotion Draw Results";
                     Paragraph para = new Paragraph(texttoDisplay, headerFont);
                     para.Alignment = Element.ALIGN_CENTER;
                     pdfDoc.Add(para);

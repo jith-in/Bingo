@@ -29,7 +29,7 @@ namespace Bingo
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.button1 = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.Generate = new System.Windows.Forms.Button();
@@ -47,6 +47,7 @@ namespace Bingo
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.ForeColor = System.Drawing.Color.Black;
             this.button1.Location = new System.Drawing.Point(1137, 90);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(141, 30);
@@ -57,6 +58,7 @@ namespace Bingo
             // 
             // dataGridView1
             // 
+            this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Location = new System.Drawing.Point(27, 42);
             this.dataGridView1.Name = "dataGridView1";
@@ -67,6 +69,7 @@ namespace Bingo
             // Generate
             // 
             this.Generate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Generate.ForeColor = System.Drawing.Color.Black;
             this.Generate.Location = new System.Drawing.Point(410, 217);
             this.Generate.Name = "Generate";
             this.Generate.Size = new System.Drawing.Size(172, 45);
@@ -78,15 +81,16 @@ namespace Bingo
             // dataGridView2
             // 
             this.dataGridView2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dataGridView2.BackgroundColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Tai Le", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Tai Le", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Chocolate;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView2.Location = new System.Drawing.Point(27, 278);
             this.dataGridView2.Margin = new System.Windows.Forms.Padding(4);
             this.dataGridView2.Name = "dataGridView2";
@@ -107,6 +111,7 @@ namespace Bingo
             // 
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.ForeColor = System.Drawing.Color.Chocolate;
             this.button2.Location = new System.Drawing.Point(643, 222);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(92, 35);
@@ -118,6 +123,7 @@ namespace Bingo
             // 
             // button3
             // 
+            this.button3.ForeColor = System.Drawing.Color.Black;
             this.button3.Location = new System.Drawing.Point(872, 222);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(120, 34);
@@ -136,7 +142,7 @@ namespace Bingo
             // 
             // txtHeader
             // 
-            this.txtHeader.BackColor = System.Drawing.SystemColors.Control;
+            this.txtHeader.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.txtHeader.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtHeader.Location = new System.Drawing.Point(131, 13);
             this.txtHeader.Name = "txtHeader";
@@ -145,6 +151,7 @@ namespace Bingo
             // 
             // btnExcel
             // 
+            this.btnExcel.ForeColor = System.Drawing.Color.Black;
             this.btnExcel.Location = new System.Drawing.Point(1027, 222);
             this.btnExcel.Name = "btnExcel";
             this.btnExcel.Size = new System.Drawing.Size(104, 34);
@@ -157,6 +164,7 @@ namespace Bingo
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.AutoSize = true;
+            this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.ClientSize = new System.Drawing.Size(1329, 749);
             this.Controls.Add(this.btnExcel);
             this.Controls.Add(this.txtHeader);
@@ -168,8 +176,10 @@ namespace Bingo
             this.Controls.Add(this.Generate);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.button1);
+            this.ForeColor = System.Drawing.Color.Chocolate;
             this.Name = "Form1";
             this.Text = "Bingo";
+            this.TransparencyKey = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.ResumeLayout(false);
