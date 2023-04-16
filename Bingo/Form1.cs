@@ -11,11 +11,12 @@ using System.Windows.Forms;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Text;
 namespace Bingo
 {
     public partial class Form1 : Form
     {
-       
+
         DataTable dt;
         DataTable DtNew;
         int dtrowCount;
@@ -25,16 +26,21 @@ namespace Bingo
         string strtDate = string.Empty;
         string strtEnd = string.Empty;
         string strExcelPath;
-        int ifirstpricecount = Convert.ToInt32(ConfigurationManager.AppSettings["firstprizecount"].ToString());
+        int ifirstprice = Convert.ToInt32(ConfigurationManager.AppSettings["firstprize"].ToString());
+        int isecondprice = Convert.ToInt32(ConfigurationManager.AppSettings["secondprize"].ToString());
+        // int ithirdprice = Convert.ToInt32(ConfigurationManager.AppSettings["thirdprize"].ToString());
         string strFirstprizetext = ConfigurationManager.AppSettings["firstprizetxt"].ToString();
         string strSecondprizetext = ConfigurationManager.AppSettings["secondprizetxt"].ToString();
+        string strThirdprizetext = ConfigurationManager.AppSettings["thirdprizetxt"].ToString();
         public Form1()
         {
             InitializeComponent();
+            lblHeading.Text = ConfigurationManager.AppSettings["Headertext"].ToString();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+
             textBox1.Text = string.Empty;
             recordCount.Text = string.Empty;
             OpenFileDialog op1 = new OpenFileDialog();
@@ -74,7 +80,8 @@ namespace Bingo
                             dr[i] = rows[i];
                             if (dtcsv.Columns[i].DataType == typeof(string))
                             {
-                                rows[i] = ((string)rows[i].Replace("\"", "").Replace("'", ""));
+                                rows[i] = Encoding.Unicode.GetString(Encoding.Unicode.GetBytes((string)rows[i].Replace("\"", "").Replace("'", "")));
+                                //rows[i] = ((string)rows[i].Replace("\"", "").Replace("'", ""));
                             }
                         }
 
@@ -83,7 +90,7 @@ namespace Bingo
                 }
                 dt = dtcsv;
                 dtrowCount = dt.Rows.Count;
-                recordCount.Text = dtrowCount.ToString() + " Records Loaded";
+                recordCount.Text = "Count  :" + dtrowCount.ToString() + "  Records Loaded";
 
                 int rowCount = 1;
 
@@ -168,19 +175,17 @@ namespace Bingo
                                 var rows = dt.AsEnumerable().Except(DtNew.AsEnumerable(), DataRowComparer.Default);
                                 if (rows.Count() != 0)
                                     dt = rows.CopyToDataTable();
-                                dataGridView1.DataSource = dt;
-                                if (DtNew.Rows.Count >= ifirstpricecount)
+                                
+                                var groups = DtNew.AsEnumerable().GroupBy(row => row.Field<string>("REFNO")).Where(group => group.Count() > 1);
+                                if (groups.Any())
                                 {
-                                    for (int i = 0; i < ifirstpricecount; i++)
-                                    {
-                                        dataGridView2.Rows[i].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#FFD700");
-                                    }
-
+                                   MessageBox.Show("Duplicate Ref.Number exits.Please verify");
+                                   
                                 }
-                                //if (DtNew.Rows.Count >= 2)
-                                //{
-                                //    dataGridView2.Rows[1].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#FFD700");
-                                //}
+                                dataGridView1.DataSource = dt;
+                              
+
+
                             }
                             else
                             {
@@ -231,7 +236,7 @@ namespace Bingo
             {
                 AdditionalColumns(DtNew);
                 DataView view = new DataView(DtNew);
-                DtNew = view.ToTable("DtNew", false, "SNO", "TXNDATE", "REFNO", "CUSTOMERNAME", "IDNO", "AMOUNT", "RESULT");
+                DtNew = view.ToTable("DtNew", false, "SNO", "TXNDATE", "REFNO", "CUSTOMERNAME", "IDNO", "AMOUNT", "CONTACTNO", "RESULT");
                 dataGridView2.DataSource = DtNew;
                 dtnewrowCount = DtNew.Rows.Count;
             }
@@ -243,7 +248,7 @@ namespace Bingo
             }
         }
 
-        public  void AdditionalColumns(DataTable DtNew)
+        public void AdditionalColumns(DataTable DtNew)
         {
             try
             {
@@ -266,21 +271,29 @@ namespace Bingo
                     DtNew.Columns.Add(newCol);
                 }
                 int j = 1;
+
                 foreach (DataRow row in DtNew.Rows)
                 {
-                    if (j <= ifirstpricecount)
+                    if (j <= ifirstprice)
                     {
                         row["Result"] = strFirstprizetext;
                     }
-                    else
+                    else if (j > ifirstprice && j <= (ifirstprice + isecondprice))
                     {
                         row["Result"] = strSecondprizetext;
                     }
+                    else
+                    {
+                        row["Result"] = strThirdprizetext;
+                    }
+                    
                     j++;
 
                 }
                 i = 0;
                 j = 0;
+
+
             }
             catch (Exception ex)
             {
@@ -321,14 +334,14 @@ namespace Bingo
             DataTable dt = myDataTable;
             Document pdfDoc = new Document();
             iTextSharp.text.Font font13 = FontFactory.GetFont("ARIAL", 13);
-            iTextSharp.text.Font font8 = FontFactory.GetFont("ARIAL", 8);
+            iTextSharp.text.Font font6 = FontFactory.GetFont("ARIAL", 6);
             iTextSharp.text.Font headerFont = FontFactory.GetFont("HELVETICA", 15);
             ServicePointManager.Expect100Continue = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             try
             {
                 path = ConfigurationManager.AppSettings["PDFDownloadPath"].ToString();
-                fullPath = Path.Combine(path, "Dohaexchange_Promotion_Draw_Results.pdf");
+                fullPath = Path.Combine(path, "Dohaexchange_Promotion_Draw_Results" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".pdf");
                 PdfWriter writer = PdfWriter.GetInstance(pdfDoc, new FileStream(fullPath, FileMode.Create));
                 pdfDoc.Open();
 
@@ -337,7 +350,9 @@ namespace Bingo
                     PdfPTable PdfTable = new PdfPTable(1);
 
                     PdfPCell PdfPCell = new PdfPCell();
-                    string imageURL = @".\Sample File\Dohaex.png";
+                    string imageURL = @".\Sample File\DEX_2.png";
+                    BaseFont bf = BaseFont.CreateFont("c:\\windows\\fonts\\arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                    iTextSharp.text.Font font = new iTextSharp.text.Font(bf, 8);
 
                     iTextSharp.text.Image jpg = iTextSharp.text.Image.GetInstance(imageURL);
                     jpg.ScaleToFit(pdfDoc.PageSize.Width, 75);
@@ -353,7 +368,7 @@ namespace Bingo
                     PdfTable.SpacingBefore = 25f;
                     for (int columns = 0; columns <= dt.Columns.Count - 1; columns++)
                     {
-                        PdfPCell = new PdfPCell(new Phrase(new Chunk(dt.Columns[columns].ColumnName, font13)));
+                        PdfPCell = new PdfPCell(new Phrase(new Chunk(dt.Columns[columns].ColumnName, font6)));
                         PdfTable.AddCell(PdfPCell);
                     }
 
@@ -361,13 +376,20 @@ namespace Bingo
                     {
                         for (int column = 0; column <= dt.Columns.Count - 1; column++)
                         {
-                            PdfPCell = new PdfPCell(new Phrase(new Chunk(dt.Rows[rows][column].ToString(), font8)));
+
+                            PdfPCell = new PdfPCell(new Phrase(new Chunk(Encoding.Unicode.GetString(Encoding.Unicode.GetBytes(dt.Rows[rows][column].ToString())), font)));
                             PdfTable.AddCell(PdfPCell);
                         }
                     }
                     pdfDoc.Add(PdfTable);
                 }
+                pdfDoc.AddCreationDate();
                 pdfDoc.Close();
+
+
+
+
+
 
             }
             catch (DocumentException de)
@@ -484,5 +506,8 @@ namespace Bingo
 
 
         }
+
+
+
     }
 }
