@@ -12,6 +12,8 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Text;
+using System.Web;
+
 namespace Bingo
 {
     public partial class Form1 : Form
@@ -32,10 +34,14 @@ namespace Bingo
         string strFirstprizetext = ConfigurationManager.AppSettings["firstprizetxt"].ToString();
         string strSecondprizetext = ConfigurationManager.AppSettings["secondprizetxt"].ToString();
         string strThirdprizetext = ConfigurationManager.AppSettings["thirdprizetxt"].ToString();
+        string myValue = ConfigurationManager.AppSettings["Headertext"].ToString();
+        string strColourFirst = ConfigurationManager.AppSettings["colourfirst"].ToString();
+        string strColourSecond= ConfigurationManager.AppSettings["coloursecond"].ToString();
         public Form1()
         {
             InitializeComponent();
-            lblHeading.Text = ConfigurationManager.AppSettings["Headertext"].ToString();
+            lblHeading.Text = HttpUtility.HtmlDecode(myValue);
+          
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -179,12 +185,35 @@ namespace Bingo
                                 var groups = DtNew.AsEnumerable().GroupBy(row => row.Field<string>("REFNO")).Where(group => group.Count() > 1);
                                 if (groups.Any())
                                 {
-                                   MessageBox.Show("Duplicate Ref.Number exits.Please verify");
+                                   //MessageBox.Show("Duplicate Ref.Number exits.Please verify");
                                    
                                 }
                                 dataGridView1.DataSource = dt;
-                              
+                                int j = 0;
 
+                                foreach (DataRow row in DtNew.Rows)
+                                {
+                                    if (j <= ifirstprice)
+                                    {
+                                        dataGridView2.Rows[j].DefaultCellStyle.BackColor = ColorTranslator.FromHtml(strColourFirst);
+                                    }
+                                    else if (j > ifirstprice && j <= (ifirstprice + isecondprice))
+                                    {
+                                        dataGridView2.Rows[j-1].DefaultCellStyle.BackColor = ColorTranslator.FromHtml(strColourSecond);
+                                    }
+                                    j++;
+
+                                }
+                                
+                                j = 0;
+                                //if (DtNew.Rows.Count <= ifirstprice)
+                                //{
+                                //    dataGridView2.Rows[DtNew.Rows.Count].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#FFD700");
+                                //}
+                                //else if (DtNew.Rows.Count >= ifirstprice && DtNew.Rows.Count <= isecondprice)
+                                //{
+                                //    dataGridView2.Rows[0].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("Blue");
+                                //}
 
                             }
                             else
