@@ -13,6 +13,8 @@ using iTextSharp.text.pdf;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Text;
 using System.Web;
+using System.Drawing.Text;
+using Font = System.Drawing.Font;
 
 namespace Bingo
 {
@@ -40,6 +42,9 @@ namespace Bingo
         public Form1()
         {
             InitializeComponent();
+            PrivateFontCollection privateFonts = new PrivateFontCollection();
+            privateFonts.AddFontFile(@".\Sample File\Poppins-Bold.ttf"); 
+            lblHeading.Font= new Font(privateFonts.Families[0], 20, FontStyle.Bold);
             lblHeading.Text = HttpUtility.HtmlDecode(myValue);
           
         }
@@ -185,7 +190,7 @@ namespace Bingo
                                 var groups = DtNew.AsEnumerable().GroupBy(row => row.Field<string>("REFNO")).Where(group => group.Count() > 1);
                                 if (groups.Any())
                                 {
-                                   //MessageBox.Show("Duplicate Ref.Number exits.Please verify");
+                                   MessageBox.Show("Duplicate Ref.Number exits.Please verify");
                                    
                                 }
                                 dataGridView1.DataSource = dt;
