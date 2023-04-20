@@ -31,7 +31,7 @@ namespace Bingo
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnUpload = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.Generate = new System.Windows.Forms.Button();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
@@ -43,23 +43,24 @@ namespace Bingo
             this.button2 = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.lblHeading = new System.Windows.Forms.Label();
+            this.autoUpload = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
-            // button1
+            // btnUpload
             // 
-            this.button1.BackColor = System.Drawing.Color.Maroon;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.ForeColor = System.Drawing.Color.Transparent;
-            this.button1.Location = new System.Drawing.Point(1190, 133);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(166, 48);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Upload";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnUpload.BackColor = System.Drawing.Color.Maroon;
+            this.btnUpload.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnUpload.ForeColor = System.Drawing.Color.Transparent;
+            this.btnUpload.Location = new System.Drawing.Point(1190, 110);
+            this.btnUpload.Name = "btnUpload";
+            this.btnUpload.Size = new System.Drawing.Size(166, 48);
+            this.btnUpload.TabIndex = 0;
+            this.btnUpload.Text = "Upload";
+            this.btnUpload.UseVisualStyleBackColor = false;
+            this.btnUpload.Click += new System.EventHandler(this.button1_Click);
             // 
             // dataGridView1
             // 
@@ -195,12 +196,26 @@ namespace Bingo
             this.lblHeading.TabIndex = 13;
             this.lblHeading.Text = "label1";
             // 
+            // autoUpload
+            // 
+            this.autoUpload.BackColor = System.Drawing.Color.Maroon;
+            this.autoUpload.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+            this.autoUpload.ForeColor = System.Drawing.Color.Transparent;
+            this.autoUpload.Location = new System.Drawing.Point(1190, 183);
+            this.autoUpload.Name = "autoUpload";
+            this.autoUpload.Size = new System.Drawing.Size(166, 47);
+            this.autoUpload.TabIndex = 14;
+            this.autoUpload.Text = "Auto Upload";
+            this.autoUpload.UseVisualStyleBackColor = false;
+            this.autoUpload.Click += new System.EventHandler(this.autoUpload_Click);
+            // 
             // Form1
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1476, 749);
+            this.Controls.Add(this.autoUpload);
             this.Controls.Add(this.lblHeading);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.button2);
@@ -212,7 +227,7 @@ namespace Bingo
             this.Controls.Add(this.dataGridView2);
             this.Controls.Add(this.Generate);
             this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnUpload);
             this.ForeColor = System.Drawing.Color.Black;
             this.Name = "Form1";
             this.Text = "Bingo";
@@ -227,7 +242,7 @@ namespace Bingo
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnUpload;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button Generate;
         private System.Windows.Forms.DataGridView dataGridView2;
@@ -239,6 +254,7 @@ namespace Bingo
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label lblHeading;
+        private System.Windows.Forms.Button autoUpload;
     }
 }
 

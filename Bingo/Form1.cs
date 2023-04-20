@@ -30,23 +30,39 @@ namespace Bingo
         string strtDate = string.Empty;
         string strtEnd = string.Empty;
         string strExcelPath;
+        string strCsvPath;
         int ifirstprice = Convert.ToInt32(ConfigurationManager.AppSettings["firstprize"].ToString());
-        int isecondprice = Convert.ToInt32(ConfigurationManager.AppSettings["secondprize"].ToString());
+        int isecondprice = Convert.ToInt32(ConfigurationManager.AppSettings["secondprize"]?.ToString());
         // int ithirdprice = Convert.ToInt32(ConfigurationManager.AppSettings["thirdprize"].ToString());
         string strFirstprizetext = ConfigurationManager.AppSettings["firstprizetxt"].ToString();
-        string strSecondprizetext = ConfigurationManager.AppSettings["secondprizetxt"].ToString();
-        string strThirdprizetext = ConfigurationManager.AppSettings["thirdprizetxt"].ToString();
-        string myValue = ConfigurationManager.AppSettings["Headertext"].ToString();
-        string strColourFirst = ConfigurationManager.AppSettings["colourfirst"].ToString();
-        string strColourSecond= ConfigurationManager.AppSettings["coloursecond"].ToString();
+        string strSecondprizetext = ConfigurationManager.AppSettings["secondprizetxt"]?.ToString();
+        string strThirdprizetext = ConfigurationManager.AppSettings["thirdprizetxt"]?.ToString();
+        string myValue = ConfigurationManager.AppSettings["Headertext"]?.ToString();
+        string strColourFirst = ConfigurationManager.AppSettings["colourfirst"]?.ToString();
+        string strColourSecond = ConfigurationManager.AppSettings["coloursecond"]?.ToString();
+        string strCsvfolderpath = ConfigurationManager.AppSettings["Csvfolderpath"]?.ToString();
+        bool isAutoUpload = Convert.ToBoolean(ConfigurationManager.AppSettings["Autoupload"]?.ToString());
         public Form1()
         {
             InitializeComponent();
             PrivateFontCollection privateFonts = new PrivateFontCollection();
-            privateFonts.AddFontFile(@".\Sample File\Poppins-Bold.ttf"); 
-            lblHeading.Font= new Font(privateFonts.Families[0], 20, FontStyle.Bold);
+            privateFonts.AddFontFile(@".\Sample File\Poppins-Bold.ttf");
+            lblHeading.Font = new Font(privateFonts.Families[0], 20, FontStyle.Bold);
             lblHeading.Text = HttpUtility.HtmlDecode(myValue);
-          
+            if(isAutoUpload)
+            {
+                autoUpload.Visible = false;
+                btnUpload.Visible = false;
+                EventHandler handler = autoUpload_Click;
+                handler.Invoke(this, EventArgs.Empty);
+                
+            }
+            else
+            {
+                btnUpload.Visible = true;
+                autoUpload.Visible = false;
+            }
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -186,30 +202,33 @@ namespace Bingo
                                 var rows = dt.AsEnumerable().Except(DtNew.AsEnumerable(), DataRowComparer.Default);
                                 if (rows.Count() != 0)
                                     dt = rows.CopyToDataTable();
-                                
+
                                 var groups = DtNew.AsEnumerable().GroupBy(row => row.Field<string>("REFNO")).Where(group => group.Count() > 1);
                                 if (groups.Any())
                                 {
-                                   MessageBox.Show("Duplicate Ref.Number exits.Please verify");
-                                   
+                                    MessageBox.Show("Duplicate Ref.Number exits.Please verify");
+
                                 }
                                 dataGridView1.DataSource = dt;
                                 int j = 0;
-
-                                foreach (DataRow row in DtNew.Rows)
+                                int k = ifirstprice+1;
+                                int rowCount = DtNew.Rows.Count;
+                                for(int i=0;i< rowCount;i++)
                                 {
-                                    if (j <= ifirstprice)
+                                    if (j <= ifirstprice - 1)
                                     {
+
                                         dataGridView2.Rows[j].DefaultCellStyle.BackColor = ColorTranslator.FromHtml(strColourFirst);
                                     }
                                     else if (j > ifirstprice && j <= (ifirstprice + isecondprice))
                                     {
-                                        dataGridView2.Rows[j-1].DefaultCellStyle.BackColor = ColorTranslator.FromHtml(strColourSecond);
+                                            dataGridView2.Rows[j-1].DefaultCellStyle.BackColor = ColorTranslator.FromHtml(strColourSecond);
+                                            k++;
                                     }
                                     j++;
 
                                 }
-                                
+
                                 j = 0;
                                 //if (DtNew.Rows.Count <= ifirstprice)
                                 //{
@@ -312,15 +331,15 @@ namespace Bingo
                     {
                         row["Result"] = strFirstprizetext;
                     }
-                    else if (j > ifirstprice && j <= (ifirstprice + isecondprice))
+                    else if (j > ifirstprice && j <= (ifirstprice + isecondprice) && isecondprice > 0)
                     {
                         row["Result"] = strSecondprizetext;
                     }
-                    else
+                    else if (isecondprice > 0)
                     {
                         row["Result"] = strThirdprizetext;
                     }
-                    
+
                     j++;
 
                 }
@@ -362,6 +381,14 @@ namespace Bingo
         private void button2_Click_1(object sender, EventArgs e)
         {
             clear();
+            if (isAutoUpload)
+            {
+                
+                btnUpload.Visible = true;
+                EventHandler handler = autoUpload_Click;
+                handler.Invoke(this, EventArgs.Empty);
+
+            }
         }
         public void ExportToPdf(DataTable myDataTable)
         {
@@ -541,7 +568,32 @@ namespace Bingo
 
         }
 
+        private void autoUpload_Click(object sender, EventArgs e)
+        {
+            
+            if (Directory.Exists(strCsvfolderpath))
+            {
+                string[] files = Directory.GetFiles(strCsvfolderpath, "*.csv");
+
+                if (files.Length > 0)
+                {
+                    strCsvPath = Path.GetFileName(files[0]);
+                    strCsvPath = strCsvfolderpath + "\\" + strCsvPath;
 
 
+                }
+                textBox1.Text = string.Empty;
+                recordCount.Text = string.Empty;
+                dataGridView1.DataSource = ConvertCSVtoDataTable1(strCsvPath);
+                dataGridView2.DataSource = DtNew = null;
+                strtDate = string.Empty;
+
+                strtEnd = string.Empty;
+            }
+            else
+            {
+                MessageBox.Show("Invalid Path "+ strCsvfolderpath);
+            }
+        }
     }
 }
