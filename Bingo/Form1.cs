@@ -120,75 +120,59 @@ namespace Bingo
                 int count;
                 if (dt != null && dt.Rows.Count > 0 && dtrowCount != dtnewrowCount)
                 {
-                    var rand = new Random();
-                    List<DataRow> list1 = dt.AsEnumerable().ToList();
-
-
-                    List<DataRow> randomList = new List<DataRow>();
-
-                    var list = dt.AsEnumerable().ToList();
-                    List<int> randomNumbers = new List<int>();
-                    var random = new Random();
-                    if (!string.IsNullOrEmpty(textBox1.Text.ToString()))
+                    if (!string.IsNullOrEmpty(textBox1.Text.ToString()) && int.TryParse(textBox1.Text, out count) && count > 0 && count <= dt.Rows.Count)
                     {
-                        bool isValid = int.TryParse(textBox1.Text.ToString(), out count);
-                        if (isValid && count > 0 && count <= dt.Rows.Count)
+                        // Define empcode values you want to select (e.g., 2 and 5)
+                        string empCodesToSelectStr = ConfigurationManager.AppSettings["CorrespondentCodesToSelect"];
+                        List<string> empCodesToSelect = empCodesToSelectStr.Split(',').ToList();
+
+                        // Filter the rows that match the desired empcode values
+                        var filteredRows = dt.AsEnumerable().Where(row => empCodesToSelect.Contains(row["CORRESPONDENT"].ToString()));
+
+                        if (filteredRows.Count() < count)
                         {
-                            do
-                            {
-                                int index = random.Next(list.Count);
-                                if (!randomNumbers.Contains(index))
-                                {
-                                    randomNumbers.Add(index);
-                                    randomList.Add(list[index]);
-
-
-                                }
-                            } while (randomList.Count() < count);
-
-                            DataTable DtRandom = new DataTable();
-                            DtRandom = randomList.CopyToDataTable();
-                            if (DtNew != null && DtNew.Rows.Count > 0)
-                                DtNew.Merge(DtRandom);
-                            else
-                            {
-                                DtNew = new DataTable();
-                                DtNew.Merge(DtRandom);
-                            }
-
-                            //Logic to add extra columns that is not available in the csv
-                            AddAdditionalColumns();
-                            //
-
-                            var rows = dt.AsEnumerable().Except(DtNew.AsEnumerable(), DataRowComparer.Default);
-                            if (rows.Count() != 0)
-                                dt = rows.CopyToDataTable();
-                            dataGridView1.DataSource = dt;
-                            if (DtNew.Rows.Count >= 1)
-                            {
-                                dataGridView2.Rows[0].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#FFD700");
-                            }
-                            //if (DtNew.Rows.Count >= 2)
-                            //{
-                            //    dataGridView2.Rows[1].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#FFD700");
-                            //}
+                            MessageBox.Show("Not enough matching records to select.");
+                            Cursor = Cursors.Arrow;
+                            return;
                         }
+
+                        // Shuffle the filtered rows
+                        List<DataRow> shuffledRows = filteredRows.OrderBy(row => Guid.NewGuid()).ToList();
+
+                        // Take the top 'count' rows as the random selection
+                        List<DataRow> randomList = shuffledRows.Take(count).ToList();
+
+                        DataTable DtRandom = new DataTable();
+                        DtRandom = randomList.CopyToDataTable();
+
+                        // Merge the new data into DtNew
+                        if (DtNew != null && DtNew.Rows.Count > 0)
+                            DtNew.Merge(DtRandom);
                         else
                         {
-                            if (count > dt.Rows.Count)
-                            {
-                                MessageBox.Show("Number should be less than uploaded data!!");
-                            }
-                            if (!isValid)
-                            {
-                                MessageBox.Show("Enter a Valid Number!!");
-                            }
+                            DtNew = new DataTable();
+                            DtNew.Merge(DtRandom);
+                        }
 
+                        // Remove duplicates from DtNew
+                        RemoveDuplicateRows(DtNew);
+
+                        // Logic to add extra columns that are not available in the CSV
+                        AddAdditionalColumns();
+
+                        var remainingRows = dt.AsEnumerable().Except(DtNew.AsEnumerable(), DataRowComparer.Default);
+                        if (remainingRows.Count() != 0)
+                            dt = remainingRows.CopyToDataTable();
+                        dataGridView1.DataSource = dt;
+
+                        if (DtNew.Rows.Count >= 1)
+                        {
+                            dataGridView2.Rows[0].DefaultCellStyle.BackColor = ColorTranslator.FromHtml("#FFD700");
                         }
                     }
                     else
                     {
-                        MessageBox.Show("Enter Count");
+                        MessageBox.Show("Invalid input. Please enter a valid count.");
                     }
                 }
                 else
@@ -210,6 +194,25 @@ namespace Bingo
                 Cursor = Cursors.Arrow;
             }
         }
+
+
+        private void RemoveDuplicateRows(DataTable table)
+        {
+            var uniqueRows = table.AsEnumerable()
+                .GroupBy(row => string.Join(",", row.ItemArray))
+                .Select(group => group.First())
+                .CopyToDataTable();
+
+            // Clear the original table and copy the unique rows back
+            table.Clear();
+            foreach (DataRow newRow in uniqueRows.Rows)
+            {
+                table.ImportRow(newRow);
+            }
+        }
+
+
+
 
         private void AddAdditionalColumns()
         {
@@ -471,3 +474,4 @@ namespace Bingo
         }
     }
 }
+
